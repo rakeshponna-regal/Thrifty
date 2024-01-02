@@ -4,97 +4,109 @@
  *
  * @format
  */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import "./ignoreWarnings"
+import React, { useEffect } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
+  LogBox,
   StyleSheet,
-  Text,
-  useColorScheme,
-  View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from './src/screens/LoginScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import SplashScreen from './src/screens/SplashScreen';
+import UserTypeScreen from './src/screens/UserTypeScreen';
+import SellerScreen from './src/screens/SellerScreen';
+import Realm from "realm";
+const Stack = createNativeStackNavigator();
+Realm.flags.THROW_ON_GLOBAL_REALM = true
+LogBox.ignoreLogs(['Your app is relying on a Realm global, which will be removed in realm-js v13, please update your code to ensure you import Realm:'])
+LogBox.ignoreAllLogs
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const App = () => {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="SplashScreen">
+        {/* SplashScreen which will come once for 5 Seconds */}
+        <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          // Hiding header for Splash Screen
+          options={{ headerShown: false }}
+        />
+        {/* Auth Navigator: Include Login and Signup */}
+        <Stack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{ headerShown: false }}
       />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      <Stack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{
+          title: 'Register', //Set Header Title
+          headerStyle: {
+            backgroundColor: '#FFFFFF', //Set Header color
+          },
+          headerTintColor: '#000', //Set Header text color
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="sellerScreen"
+        component={SellerScreen}
+        options={{
+          title: 'Upload Product', //Set Header Title
+          headerStyle: {
+            backgroundColor: '#FFFFFF', //Set Header color
+          },
+          headerTintColor: '#000', //Set Header text color
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="buyerScreen"
+        component={HomeScreen}
+        options={{
+          title: 'Buyer', //Set Header Title
+          headerStyle: {
+            backgroundColor: '#FFFFFF', //Set Header color
+          },
+          headerTintColor: '#000', //Set Header text color
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
+        }}
+      />
+        <Stack.Screen
+          name="UserType"
+          component={UserTypeScreen}
+          options={{ headerShown: false }}
+        />
+        {/* Navigation Drawer as a landing page 
+        <Stack.Screen
+          name="DrawerNavigationRoutes"
+          component={DrawerNavigationRoutes}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
+        */}
+      </Stack.Navigator>
+    </NavigationContainer>
+    
   );
-}
+};
+
+export default App;
+
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -114,5 +126,3 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-
-export default App;
