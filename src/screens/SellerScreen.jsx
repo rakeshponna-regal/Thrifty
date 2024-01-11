@@ -10,11 +10,12 @@ import CustomTextinput from '../components/CustomTextinput';
 import SelectDropdown from 'react-native-select-dropdown';
 import { colorsTypes, sizeTypes } from '../utils/Constants';
 import Realm from 'realm';
-let realm = new Realm({ path: 'UserDatabase.realm' });
+import realmSchema from '../database/RealmConfig';
 
 
-function SellerScreen({ navigation }) {
+const  SellerScreen = ({ navigation }) => {
     const [images, setImages] = useState([]);
+    const [singleImages, setSingleImages] = useState("");
     const [loading, setLoading] = useState(false);
     const [productName, setProductName] = useState("");
     const [productSize, setProductSize] = useState("");
@@ -47,7 +48,7 @@ function SellerScreen({ navigation }) {
                     </TouchableOpacity>
                 ),
             });
-    }, [navigation]);
+    }, [navigation,images]);
 
     function selectImage() {
         let options = {
@@ -80,10 +81,18 @@ function SellerScreen({ navigation }) {
         showMessage({
             message: 'Saving...'
         });
-
-        realm.write(() => {
-            var ID = realm.objects('products').sorted('product_id', true).length > 0
-              ? realm.objects('products').sorted('product_id', true)[0]
+        console.log(images[0],singleImages)
+        var img = ""
+        if(images[0] == undefined){
+            img = singleImages
+        }else{
+            img = images[0]
+        }
+        console.log(images[0])
+        console.log("images data => ",images[0],singleImages)
+        realmSchema.write(() => {
+            var ID = realmSchema.objects('products').sorted('product_id', true).length > 0
+              ? realmSchema.objects('products').sorted('product_id', true)[0]
                 .product_id + 1
               : 1;
 
@@ -94,13 +103,13 @@ function SellerScreen({ navigation }) {
                 product_description: description,
                 size_type: productSizeType,
                 size: productSizeType,
-                image_urls: images[0],
+                image_urls: img,
                 price: productPrice,
                 agency: productAgency,
                 brand: productBrand,
                 color: productColor,
             }
-           const status =  realm.create('products', data);
+           const status =  realmSchema.create('products', data);
            console.log("status",status)
 
            Alert.alert(
@@ -138,14 +147,14 @@ function SellerScreen({ navigation }) {
                 let tempArray = []
                 response.assets?.forEach((item) => {
                     tempArray.push(item.uri)
+                    setSingleImages(item.uri)
+                    // setImages(item.uri)
                 })
                 setImages(tempArray)
                 console.log(images)
             }
         });
     };
-
-
 
     handleCameraLaunch = () => {
         const options = {

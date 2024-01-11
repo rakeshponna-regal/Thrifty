@@ -2,6 +2,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
+import Realm from 'realm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import {
@@ -10,15 +11,39 @@ import {
   StyleSheet,
   Image
 } from 'react-native';
+import { useDispatch ,useSelector} from 'react-redux';
 import { KEY_IS_DUMMY_DATA, KEY_IS_USER_LOGDED, retrieveItem, storeItem } from '../utils/asyncStorage';
-import realmSchema from '../database/RealmConfig';
-import { products } from '../utils/Constants';
+import { clearState, storeProductsFromJson } from '../services/slices/productsSlice';
+import { trackPromise } from 'react-promise-tracker';
 const SplashScreen = ({ navigation }) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
+  const dispatch = useDispatch();
+
+const loadInitData = async () => {
+  try {
+      const isLoaded = await retrieveItem(KEY_IS_DUMMY_DATA)
+      console.log("object", isLoaded)
+      if (isLoaded == null) {
+          console.log("object Added")
+          trackPromise(
+              dispatch(storeProductsFromJson())
+              .unwrap()
+              .then(data => {
+                  storeItem(KEY_IS_DUMMY_DATA, "true")
+                  console.log("storeProductsFromJson",data)
+               })
+          )
+      }
+      
+  } catch (error) {
+      console.log(error)
+  }
+}
 
   useEffect(() => {
-    realmSchema
+    dispatch(clearState());
+    loadInitData()
     setTimeout(() => {
       setAnimating(false);
       //Check if user_id is set or not
@@ -26,14 +51,13 @@ const SplashScreen = ({ navigation }) => {
       //else send to Home Screen
       AsyncStorage.getItem(KEY_IS_USER_LOGDED).then((value) => {
         console.log("KEY_IS_USER_LOGDED", value)
-        if (value == null || value == undefined) {
+        if (value == null || value == undefined || value == "false") {
           navigation.replace('LoginScreen');
         } else if (value == "true") {
-          navigation.replace('UserType');
+          navigation.replace('tabview');
         }
       });
-    }, 5000);
-
+    }, 1000);
   }, []);
 
   return (

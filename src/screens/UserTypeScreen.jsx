@@ -1,12 +1,20 @@
+import Realm from 'realm';
 import React, { useEffect } from 'react'
 import { Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { KEY_IS_DUMMY_DATA, retrieveItem, storeItem } from '../utils/asyncStorage';
-import { products } from '../utils/Constants';
+import { KEY_IS_DUMMY_DATA, KEY_IS_USER_LOGDED, retrieveItem, storeItem } from '../utils/asyncStorage';
+import { useDispatch ,useSelector} from 'react-redux';
+import { trackPromise } from 'react-promise-tracker';
+import { getProducts, storeProductsFromJson } from '../services/api/productService';
+import { clearState } from '../services/slices/productsSlice';
 let realm = new Realm({ path: 'UserDatabase.realm' });
 
 const UserTypeScreen = ({ navigation }) => {
+    const dispatch = useDispatch();
+    // const prod = useSelector(state => state.appconfig);
+
 
     useEffect(() => {
+        dispatch(clearState());
         loadInitData()
     }, [])
 
@@ -16,18 +24,35 @@ const UserTypeScreen = ({ navigation }) => {
             console.log("object", isLoaded)
             if (isLoaded == null) {
                 console.log("object Added")
-                products.map((product) => {
-                    realm.write(() => {
-                        realm.create('products', product);
-                    })
-                })
-             await storeItem(KEY_IS_DUMMY_DATA, "true")
+                trackPromise(
+                    dispatch(storeProductsFromJson())
+                    .unwrap()
+                    .then(data => {
+                        storeItem(KEY_IS_DUMMY_DATA, "true")
+                        console.log("storeProductsFromJson",data)
+                     })
+                )
+            }else{
+                // trackPromise(
+                //     dispatch(getProducts())
+                //     .unwrap()
+                //     .then(resp => {
+                //         if(resp.status = "Success"){
+                //             console.log("getProducts",resp.data)
+                //         }else{
+
+                //         }
+                        
+                //      })
+                // )
             }
-            var product = realm.objects('products');
-            console.log( product.length)
         } catch (error) {
             console.log(error)
         }
+    }
+    const signOut = async () => {
+        await storeItem(KEY_IS_USER_LOGDED, "false")
+        navigation.replace('LoginScreen')
     }
 
     return (
@@ -62,8 +87,17 @@ const UserTypeScreen = ({ navigation }) => {
                         <TouchableOpacity
                             style={styles.buttonStyle}
                             activeOpacity={0.5}
-                            onPress={() => navigation.navigate('buyerScreen')}>
+                            onPress={() => navigation.navigate('tabview')}>
                             <Text style={styles.buttonTextStyle}>I wanna buy</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.buttonStyle}
+                            activeOpacity={0.5}
+                            onPress={() => {
+                                signOut()
+                            }}>
+                            <Text style={styles.buttonTextStyle}>Sign Out</Text>
                         </TouchableOpacity>
                     </KeyboardAvoidingView>
                 </View>

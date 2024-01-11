@@ -4,109 +4,40 @@
  *
  * @format
  */
+
 import "./ignoreWarnings"
+import Realm from "realm";
+Realm.flags.THROW_ON_GLOBAL_REALM = true
 import React, { useEffect } from 'react';
 import {
   LogBox,
   StyleSheet,
 } from 'react-native';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './src/screens/LoginScreen';
-import RegisterScreen from './src/screens/RegisterScreen';
-import HomeScreen from './src/screens/HomeScreen';
-import SplashScreen from './src/screens/SplashScreen';
-import UserTypeScreen from './src/screens/UserTypeScreen';
-import SellerScreen from './src/screens/SellerScreen';
-import Realm from "realm";
-const Stack = createNativeStackNavigator();
+import { persistStore } from "redux-persist";
+import store from "./src/services/Store";
+import { Provider } from "react-redux";
+import { PersistGate } from 'redux-persist/integration/react';
+import NavController from "./src/screens/NavController";
+import FlashMessage from "react-native-flash-message";
+
+let persistor = persistStore(store);
+
 Realm.flags.THROW_ON_GLOBAL_REALM = true
-LogBox.ignoreLogs(['Your app is relying on a Realm global, which will be removed in realm-js v13, please update your code to ensure you import Realm:'])
+LogBox.ignoreLogs(['Your app is relying on a Realm global, which will be removed in realm-js v13, please update your code to ensure you import Realm:', 'ReactImageView: Image source',
+'BSON: For React Native please polyfill crypto.getRandomValues, e.g. using: https://www.npmjs.com/package/react-native-get-random-values.'])
 LogBox.ignoreAllLogs
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen">
-        {/* SplashScreen which will come once for 5 Seconds */}
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          // Hiding header for Splash Screen
-          options={{ headerShown: false }}
-        />
-        {/* Auth Navigator: Include Login and Signup */}
-        <Stack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{
-          title: 'Register', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#FFFFFF', //Set Header color
-          },
-          headerTintColor: '#000', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-
-      <Stack.Screen
-        name="sellerScreen"
-        component={SellerScreen}
-        options={{
-          title: 'Upload Product', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#FFFFFF', //Set Header color
-          },
-          headerTintColor: '#000', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-
-      <Stack.Screen
-        name="buyerScreen"
-        component={HomeScreen}
-        options={{
-          title: 'Buyer', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#FFFFFF', //Set Header color
-          },
-          headerTintColor: '#000', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-        <Stack.Screen
-          name="UserType"
-          component={UserTypeScreen}
-          options={{ headerShown: false }}
-        />
-        {/* Navigation Drawer as a landing page 
-        <Stack.Screen
-          name="DrawerNavigationRoutes"
-          component={DrawerNavigationRoutes}
-          // Hiding header for Navigation Drawer
-          options={{headerShown: false}}
-        />
-        */}
-      </Stack.Navigator>
-    </NavigationContainer>
-    
+    <>
+      <NavController />
+      <FlashMessage position="bottom"
+        icon="auto"
+        duration={3000} />
+    </>
   );
 };
-
-export default App;
-
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -126,3 +57,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+
+const AppWrapper = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  );
+};
+
+export default AppWrapper;

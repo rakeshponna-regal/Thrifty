@@ -11,6 +11,7 @@ export async function storeItem(key, value) {
 export async function retrieveItem(key) {
     try {
         const data = await AsyncStorage.getItem(key)
+        console.log("retrieveItem",data)
          return data
     } catch (error) {
         console.log("getData error=>", error);
@@ -48,6 +49,7 @@ export async function removeAll() {
 }
 
 export const KEY_USER_EMAIL = "user_email"
+export const KEY_USER_ID = "user_Id"
 export const KEY_USER_NAME = "user_name"
 export const KEY_USER_PASSWORD = "password"
 export const KEY_REMEMBER_ME = "remember"

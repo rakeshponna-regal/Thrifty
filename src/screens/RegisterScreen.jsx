@@ -14,176 +14,117 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import Loader from '../components/Loader';
-import Realm from 'realm';
-let realm = new Realm({ path: 'UserDatabase.realm' });
-const RegisterScreen = ({navigation}) => {
+import Loader, { sleep } from '../components/Loader';
+import { useDispatch } from 'react-redux';
+import { clearState, register } from '../services/slices/registerSlice';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { validateEmail } from '../utils/utils';
+
+const RegisterScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [firstName, setfirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errortext, setErrortext] = useState('');
-  const [toggleCheckBox, setToggleCheckBox] = useState(false)
-
-  const [
-    isRegistraionSuccess,
-    setIsRegistraionSuccess
-  ] = useState(false);
 
   const emailInputRef = createRef();
   const passwordInputRef = createRef();
 
+  React.useEffect(() => {
+    dispatch(clearState());
+  }, []);
+
   const handleSubmitAction = async () => {
-    setErrortext('');
     if (!firstName) {
-      Alert.alert('Please fill First name');
-      return;
-    }
-    if (!lastName) {
-      Alert.alert('Please fill Last name');
-      return;
-    }
-    if (!userEmail) {
-      Alert.alert('Please fill Email');
-      return;
-    }
-    if (!userPassword) {
-      Alert.alert('Please fill Password');
-      return;
-    }
-    //Show Loader
-    // setLoading(true);
-    realm.write(() => {
-      var ID = realm.objects('user_details').sorted('user_id', true).length > 0
-        ? realm.objects('user_details').sorted('user_id', true)[0]
-          .user_id + 1
-        : 1;
-
-      realm.create('user_details', {
-        user_id: ID,
-        first_name: firstName,
-        last_name: lastName,
-        user_email: userEmail,
-        user_password: userPassword,
-      });
-      Alert.alert(
-        'Success',
-        'You are registered successfully',
-        [
-          {
-            text: 'Ok',
-            onPress: () => navigation.navigate('LoginScreen'),
-          },
-        ],
-        { cancelable: false }
-      );
-
-    })
-  }
-
-  const handleSubmitButton = () => {
-    setErrortext('');
-    if (!firstName) {
-      Alert('Please fill First name');
-      return;
-    }
-    if (!lastName) {
-      Alert('Please fill Last name');
-      return;
-    }
-    if (!userEmail) {
-      Alert('Please fill Email');
-      return;
-    }
-    if (!userPassword) {
-      Alert('Please fill Password');
-      return;
-    }
-    //Show Loader
-    setLoading(true);
-
-
-
-    var dataToSend = {
-      name: userName,
-      email: userEmail,
-      age: userAge,
-      address: userAddress,
-      password: userPassword,
-    };
-    var formBody = [];
-    for (var key in dataToSend) {
-      var encodedKey = encodeURIComponent(key);
-      var encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-
-    fetch('http://localhost:3000/api/user/register', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type':
-          'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        setLoading(false);
-        console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status === 'success') {
-          setIsRegistraionSuccess(true);
-          console.log(
-            'Registration Successful. Please Login to proceed'
-          );
-        } else {
-          setErrortext(responseJson.msg);
-        }
+      showMessage({
+        message: "Please fill First name",
       })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
+      return;
+    }
+    if (!lastName) {
+      showMessage({
+        message: "Please fill Last name",
+      })
+      return;
+    }
+    if (!userEmail) {
+      showMessage({
+        message: "Please fill  id",
+      })
+      return;
+    }
+    if (!validateEmail(userEmail)) {
+      showMessage({
+        message: "Please enter valid email id"
       });
-  };
-  if (isRegistraionSuccess) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#307ecc',
-          justifyContent: 'center',
-        }}>
-        <Image
-          source={require('../assets/images/success.png')}
-          style={{
-            height: 150,
-            resizeMode: 'contain',
-            alignSelf: 'center'
-          }}
-        />
-        <Text style={styles.successTextStyle}>
-          Registration Successful
-        </Text>
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          activeOpacity={0.5}
-          onPress={() => props.navigation.navigate('LoginScreen')}>
-          <Text style={styles.buttonTextStyle}>Login Now</Text>
-        </TouchableOpacity>
-      </View>
-    );
+      // Alert.alert('Please enter valid email id');
+      return;
+    }
+    if (!userPassword) {
+      showMessage({
+        message: "Please enter valid password"
+      });
+      return;
+    }
+    setLoading(true);
+    let user = {
+      firstname: firstName,
+      lastname: lastName,
+      email: userEmail.toLowerCase(),
+      password: userPassword,
+      role :'customer',
+      avatar:"https://i.imgur.com/DTfowdu.jpg"
+    }
+    await sleep(1000)
+    try {
+      dispatch(register(user))
+        .unwrap()
+        .then((res) => {
+          console.log(res)
+          if (res.status == "Success") {
+            Alert.alert(
+              res.status,
+              res.message,
+              [
+                {
+                  text: 'Ok',
+                  onPress: () => navigation.replace('LoginScreen'),
+                },
+              ],
+              { cancelable: false }
+            );
+          } else if (res.status == "Failure") {
+            console.log("Failure")
+            showMessage({
+              message: `${res.message}`,
+            })
+          } else {
+            showMessage({
+              message: res
+            });
+          }
+        })
+    } catch (e) {
+      showMessage({
+        message: e.message
+      });
+    } finally {
+      setLoading(false);
+    };
   }
   return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+    <View style={{
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: '#FFFFFF',
+      alignContent: 'center'
+    }}>
       <Loader loading={loading} />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
+          flex: 1,
           justifyContent: 'center',
           alignContent: 'center',
         }}>
@@ -210,9 +151,7 @@ const RegisterScreen = ({navigation}) => {
               placeholderTextColor="#8b9cb5"
               autoCapitalize="sentences"
               returnKeyType="next"
-              onSubmitEditing={() =>
-                emailInputRef.current && emailInputRef.current.focus()
-              }
+
               blurOnSubmit={false}
             />
           </View>
@@ -228,9 +167,7 @@ const RegisterScreen = ({navigation}) => {
               value={lastName}
               autoCapitalize="sentences"
               returnKeyType="next"
-              onSubmitEditing={() =>
-                emailInputRef.current && emailInputRef.current.focus()
-              }
+
               blurOnSubmit={false}
             />
           </View>
@@ -247,10 +184,7 @@ const RegisterScreen = ({navigation}) => {
               keyboardType="email-address"
               ref={emailInputRef}
               returnKeyType="next"
-              onSubmitEditing={() =>
-                emailInputRef.current &&
-                emailInputRef.current.focus()
-              }
+
               blurOnSubmit={false}
             />
           </View>
@@ -268,36 +202,10 @@ const RegisterScreen = ({navigation}) => {
               ref={passwordInputRef}
               returnKeyType="next"
               secureTextEntry={true}
-              onSubmitEditing={() =>
-                passwordInputRef.current &&
-                passwordInputRef.current.focus()
-              }
+
               blurOnSubmit={false}
             />
           </View>
-          {/* <View style={styles.checkboxContainer}>
-            <CheckBox
-              disabled={false}
-              value={toggleCheckBox}
-              onValueChange={(newValue) => setToggleCheckBox(newValue)}
-            />
-            <Text style={styles.label}>Seller Account</Text>
-          </View>
-
-          <View style={styles.checkboxContainer}>
-            <CheckBox
-              disabled={false}
-              value={toggleCheckBox}
-              onValueChange={(newValue) => setToggleCheckBox(newValue)}
-            />
-            <Text style={styles.label}>Buyer Account</Text>
-          </View> */}
-
-          {errortext != '' ? (
-            <Text style={styles.errorTextStyle}>
-              {errortext}
-            </Text>
-          ) : null}
           <TouchableOpacity
             style={styles.buttonStyle}
             activeOpacity={0.5}

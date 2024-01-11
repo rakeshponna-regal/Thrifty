@@ -1,0 +1,147 @@
+import React from 'react'
+import {
+     View,
+    Text,
+    Image,
+    StyleSheet,
+    SafeAreaView,
+    ScrollView,
+    TouchableOpacity } from 'react-native'
+import { HeaderBackTitle } from '../components/header'
+import { useDispatch, useSelector } from 'react-redux'
+import { sizes, colors } from "../utils/Theme";
+import { removeFromFavorite } from '../services/slices/favoriteSlice';
+import Icon from "react-native-vector-icons/Ionicons";
+
+const FavoriteTab = ({navigation}) => {
+    const favorite = useSelector((state) => state.favorite);
+  const dispatch = useDispatch();
+  console.log("favorite",favorite)
+  return (
+    <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
+       <HeaderBackTitle navigation={navigation} title={ 'Favorites'}  isBackVisible={false}/> 
+       <View style={styles.containerView} >
+       {(!favorite || favorite.length === 0) ? (
+          <Text
+            style={{
+              fontSize: 18,
+              marginTop:250,
+              fontWeight: "bold",
+              justifyContent:'center',
+              alignItems:"center",
+              alignSelf:'center',
+              textAlign: "center",
+            }}
+          >
+            No items in the favorite
+          </Text>
+        ) : null}
+         <ScrollView>
+          {favorite && favorite.map(item => {
+            return (
+              <View key={item.id} style={styles.cartItems}>
+               <TouchableOpacity
+                  onPress={() => {
+                    console.log("goToItem", item.id, item.qty)
+                    navigation.navigate('favoriteProdItems', {
+                      product: item
+                    });
+                  }
+                  }
+                >
+                  <Image style={styles.image} source={{ uri: item.images[0] }} />
+                </TouchableOpacity>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.title}>
+                    {item?.title.slice(0.10)}...
+                  </Text>
+                  <Text style={styles.title}>
+                    ${item?.price}
+                  </Text>
+                </View>
+               
+                <TouchableOpacity
+                  style={{ ...styles.button }}
+                  onPress={() => {
+                    dispatch(removeFromFavorite(item.id))
+                    console.log("removeFromFavorite", item.id)
+                  }
+                  }
+                >
+                  <View>
+                    <Icon
+                      name="trash"
+                      size={30}
+                      style={{
+                        marginRight: 10,
+                        textAlign: "right",
+                      }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+            </ScrollView>
+           
+
+
+       </View>
+      </SafeAreaView>
+  )
+}
+
+
+const styles = StyleSheet.create({
+    safeContainerStyle: {
+      backgroundColor: '#ededed',
+      flex: 1,
+      justifyContent: "flex-start",
+    },
+    containerView: {
+      marginEnd: 5,
+      width: "100%",
+      height: '100%',
+      backgroundColor: '#ffffff',
+      color: "white"
+    },
+    title: {
+      fontSize: 14,
+      paddingHorizontal: sizes.padding,
+    },
+    text: {
+      paddingHorizontal: sizes.padding,
+    },
+    image: {
+      width: 80,
+      height: 80,
+    },
+    cartItems: {
+      flex: 1,
+      flexDirection: "row",
+      paddingHorizontal: 20,
+      marginTop: 10,
+      marginBottom: 5,
+    },
+    quantity: {
+      flexDirection: "row",
+      marginStart :15,
+      justifyContent: "flex_start",
+    },
+    quantityText: {
+      flex: 1,
+      flexDirection: "row",
+    },
+    decreaseButton: {
+      height: 25,
+      width: 25,
+      backgroundColor: "rgba(27,31,35,0.05)",
+    },
+    increaseButton: {
+      height: 25,
+      width: 25,
+      backgroundColor: "rgba(27,31,35,0.05)",
+    },
+  });
+
+export default FavoriteTab
