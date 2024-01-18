@@ -47,7 +47,7 @@ const NavController = () => {
         name="sellerScreen"
         component={SellerScreen}
         options={{
-          headerShown: true,
+          headerShown: false,
           title: 'Upload Product', //Set Header Title
           headerStyle: {
             backgroundColor: '#FFFFFF', //Set Header color

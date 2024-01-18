@@ -149,10 +149,21 @@ export const Product = {
     images: { type: 'list', objectType: 'string' },
     creationAt: 'string',
     updatedAt: 'string',
+    seller_id: 'int',
     rating:  sch_rating ,
     category : sch_category
   },
 };
+
+export const seller = {
+  name :'seller',
+  properties:{
+    id:{type:'int',indexed:true},
+    userId:'string',
+    image:'string',
+    rating:  sch_rating ,
+  }
+}
 
 
 export const user_details_schema = {

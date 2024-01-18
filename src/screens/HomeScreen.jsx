@@ -2,7 +2,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, SafeAreaView, Image, Dimensions, TouchableOpacity, FlatList, StyleSheet, TouchableHighlight } from 'react-native';
 import Swiper from 'react-native-swiper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
@@ -10,60 +10,47 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { trackPromise } from 'react-promise-tracker';
-import { getProducts } from '../services/api/productService';
+import { getProducts, getProductsJson } from '../services/api/productService';
 import { HeaderBackTitle } from '../components/header';
 import { addToFavorite } from '../services/slices/favoriteSlice';
-import { selectFavoriteItemExists } from '../services/slices/selector';
 import { addToCart } from '../services/slices/cartSlice';
 import { showMessage } from 'react-native-flash-message';
+import { removeItemFromProduct } from '../services/slices/productsInfo';
 
 
 const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const flatListRef = useRef(null);
+
   const [activeIndex, setActiveIndex] = useState(0)
   const [activeProduct, setActiveProduct] = useState()
 
-  const [products, setProducts] = useState([])
   const width = Dimensions.get('window').width;
   const height = Dimensions.get('window').height;
   const [prize, setPrize] = useState("100")
   const [likedProduct, setLikedProduct] = useState(false)
   const [unLikedProduct, setUnLikedProduct] = useState(false)
   const favorite = useSelector((state) => state.favorite);
+  const productsInfo = useSelector((state) => state.productsInfo);
+  console.log("productsInfo", productsInfo.length)
 
   useEffect(() => {
-    trackPromise(
-      dispatch(getProducts())
-        .unwrap()
-        .then(resp => {
-          console.log("getProducts", resp)
-          if (resp.status = "Success") {
-            setProducts(resp.data)
-            if (resp.data.length > 0) {
-              console.log("resp.data ", resp.data[0])
-              try {
-                const isFavoriteItemExists = favorite.some((item) => item.id === resp.data[0].id)
-                // const isFavoriteItemExists = useSelector(selectFavoriteItemExists(resp.data[0].id));
-                console.log("isFavoriteItemExists", isFavoriteItemExists)
-                if (isFavoriteItemExists) {
-                  setLikedProduct(true)
-                } else {
-                  setUnLikedProduct(false)
-                }
-              } catch (error) {
-                console.log("isFavoriteItemExists error", error)
-              }
-              setActiveIndex(0)
-              setActiveProduct(resp.data[0])
-              setPrize(resp.data[0].price)
-            }
-            // console.log("getProducts",resp.data)
-          } else {
 
-          }
-        })
-    )
-    console.log(products)
+    if (productsInfo) {
+      try {
+        const isFavoriteItemExists = favorite.some((item) => item.id === productsInfo[0].id)
+        if (isFavoriteItemExists) {
+          setLikedProduct(true)
+        } else {
+          setUnLikedProduct(false)
+        }
+      } catch (error) {
+        console.log("isFavoriteItemExists error", error)
+      }
+      setActiveIndex(0)
+      setActiveProduct(productsInfo[0])
+      setPrize(productsInfo[0].price)
+    }
   }, [])
 
   const checkExisitngProducState = (isFavoriteItemExists) => {
@@ -96,28 +83,47 @@ const HomeScreen = ({ navigation }) => {
     )
   }
 
+  const handleScroll = (event) => {
+    const { contentOffset } = event.nativeEvent;
+    if (contentOffset.x < 0) {
+      // Block left-side scrolling by adjusting the contentOffset
+      flatListRef.current.scrollToOffset({ offset: 0, animated: false });
+    }
+  };
+
+  const handleContentSizeChange = (contentWidth) => {
+    // Ensure that the content width is at least the width of the FlatList
+    if (contentWidth < flatListWidth) {
+      flatListRef.current.scrollToOffset({ offset: 0, animated: false });
+    }
+  };
+
   return (
     <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
-      <HeaderBackTitle navigation={navigation} title={ 'products'}  isBackVisible={false}/>
+      <HeaderBackTitle navigation={navigation} title={'products'} isBackVisible={false} isSellerVisible={true} isSellerActivated={false} />
       <View style={styles.containerView} >
         <View
           style={{
             height: '90%',
             justifyContent: 'flex-start',
           }}>
-          {/* <FlatList
-            style={{ width :"90%", height: '100%', overflow: "visible",marginEnd:10 }}
+        {/*   <FlatList
+            style={{ width :"90%", height: '100%', overflow: "visible",marginEnd:10 ,alignSelf:'center', }}
             horizontal
             pagingEnabled
             scrollEnabled
+            ref={flatListRef}
+            onScroll={handleScroll}
+            contentContainerStyle={{ flexGrow: 1 }}
             showsHorizontalScrollIndicator={false}
             scrollEventThrottle={8}
             snapToAlignment="center"
-            data={products}
+            data={productsInfo}
+            // onContentSizeChange={(contentWidth) => handleContentSizeChange(contentWidth)}
             keyExtractor={(item, index) => `${item.id} ${index}`}
             renderItem={({ item }) => (
               <TouchableOpacity
-                style={{ width, height: "100%", overflow: "visible",margin:5, }}
+                style={{ width, height: height, }}
                 onPress={() => {
                   console.log("activeIndex", activeIndex)
                   navigation.navigate('Productinfo', {
@@ -127,37 +133,38 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   source={{ uri: item.images[0] }}
-                  resizeMode="contain"
-                  style={{ width, height: height / 2 }}
+                  style={{ width :width, height: '100%' }}
                 />
 
               </TouchableOpacity>
             )}
           >
           </FlatList> */}
-
-
           <Swiper
             dotColor="#ffffff"
             activeDotColor="red"
             showsPagination={false}
             loop={false}
+            showsButtons={false}
+            scrollEnabled={true}
             horizontal={true}
             autoplay={false}
             loadMinimal={false}
             loadMinimalSize={5}
+            ref={flatListRef}
+            onScroll={handleScroll}
             onIndexChanged={(index) => {
               setLikedProduct(false)
               setUnLikedProduct(false)
               setActiveIndex(index)
-              setPrize(products[index]?.price);
-              setActiveProduct(products[index])
-              const isFavoriteItemExists = favorite.some((item) => item.id === products[index].id)
+              setPrize(productsInfo[index]?.price);
+              setActiveProduct(productsInfo[index])
+              const isFavoriteItemExists = favorite.some((item) => item.id === productsInfo[index].id)
               checkExisitngProducState(isFavoriteItemExists)
-              console.log("object", products[index], index)
+              console.log("object", productsInfo[index], index)
             }}
           >
-            {products?.map((data) => (
+            {productsInfo?.map((data) => (
               <TouchableHighlight key={data?.id} style={{
                 width: '100%',
                 height: "100%",
@@ -173,13 +180,28 @@ const HomeScreen = ({ navigation }) => {
                   });
                 }}
               >
-                <Image source={{ uri: data?.images[0] }} style={{
-                  width: '100%',
-                  height: '100%',
-                  resizeMode: 'cover',
-                }} />
+                {
+                  data?.images ? (
+                    data?.images[0].includes("file:///") ? (
+                      <Image
+                        source={{ uri: data?.images[0] }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          resizeMode: 'cover',
+                        }} />
+  
+                    ) : (
+                      <Image source={{ uri: data?.images[0] }} style={{
+                        width: '100%',
+                        height: '100%',
+                        resizeMode: 'cover',
+                      }} />
+  
+                    )
+                  ) : (<></>)
+                }
               </TouchableHighlight>
-
             ))}
           </Swiper>
         </View>
@@ -190,19 +212,19 @@ const HomeScreen = ({ navigation }) => {
               style={{
                 fontSize: 14,
                 marginStart: 10,
-                marginTop:5,
+                marginTop: 5,
                 textAlign: 'center',
               }}>
               ${prize}
             </Text>
 
-            <TouchableOpacity style ={{ marginEnd: 10,marginTop:5,}}
-            onPress={()=>{
-              dispatch(addToCart(activeProduct))
-              showMessage({
-                message: "Product add to cart!"
-              });
-            }}
+            <TouchableOpacity style={{ marginEnd: 10, marginTop: 5, }}
+              onPress={() => {
+                dispatch(addToCart(activeProduct))
+                showMessage({
+                  message: "Product add to cart!"
+                });
+              }}
             >
               <Text
                 style={{
@@ -220,12 +242,16 @@ const HomeScreen = ({ navigation }) => {
 
           </View>
           <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginStart: 10, marginEnd: 10 }}>
-            <MaterialCommunityIcons name="backburger" size={30}  onPress={()=>{
+            <MaterialCommunityIcons name="backburger" size={30} onPress={() => {
               navigation.pop()
-            }}/>
+            }} />
             <MaterialCommunityIcons name={unLikedProduct ? 'heart-broken' : 'heart-broken-outline'} color={unLikedProduct ? 'red' : 'grey'} size={30}
               onPress={() => {
-                setUnLikedProduct(!unLikedProduct)
+                // setUnLikedProduct(!unLikedProduct)
+                dispatch(removeItemFromProduct(activeProduct.id))
+                showMessage({
+                  message: "Removed from List"
+              });
               }}
             />
             <MaterialIcons name={likedProduct ? 'favorite' : 'favorite-border'} color={likedProduct ? 'red' : 'grey'} size={30}
@@ -252,7 +278,7 @@ const styles = StyleSheet.create({
   containerView: {
     marginEnd: 5,
     width: "100%",
-    height: '84%',
+    height: '86%',
     backgroundColor: '#ffffff',
     color: "white"
   },

@@ -39,7 +39,7 @@ const CheckOutScreen = ({navigation}) => {
   return (
     <SafeAreaView forceInset={{ top: 'always' }} style={[styles.safeContainerStyle]}>
       <View style={styles.container}>
-      <HeaderBackTitle navigation={navigation} title={'Checkout'} isBackVisible={true} isSellerVisible = {false}/>
+      <HeaderBackTitle navigation={navigation} title={'Checkout'} isBackVisible={true} isSellerVisible = {true} isSellerActivated={false}/>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{

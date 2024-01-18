@@ -3,6 +3,69 @@ export const sizeTypes = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"]
 export const colorsTypes = ["WHITE", "NAVY", "BLACK", "ORANGE", "RED", "ROYAL", "YELLOW", "DARK HUNTER",
     "KHAKI", "DARK PURPLE", "LIGHT GREEN", "GREY", "CEIL BLUE", "BURGUNDY", "AQUA",]
 
+export const colorSelector = [
+
+    {
+        name: 'navy'
+    },
+    {
+        name: 'black'
+    },
+    {
+        name: 'orange'
+    },
+    {
+        name: 'red'
+    },
+    {
+        name: 'white'
+    },
+    {
+        name: 'royalblue'
+    },
+    {
+        name: 'yellow'
+    },
+    {
+        name: 'darkslategray'
+    },
+    {
+        name: 'khaki'
+    },
+    {
+        name: 'darkviolet'
+    }, {
+        name: 'lightgreen'
+    }, {
+        name: 'grey'
+    }, {
+        name: 'lightblue'
+    },
+    {
+        name: 'maroon'
+    }, {
+        name: 'aqua'
+    },
+]
+
+export const colorsMap = {
+    WHITE: 'white',
+    NAVY: 'navy',
+    BLACK: 'black',
+    ORANGE: 'orange',
+    RED: 'red',
+    ROYAL: 'royalblue',
+    YELLOW: 'yellow',
+    DARK_HUNTER: 'darkslategray',
+    KHAKI: 'khaki',
+    DARK_PURPLE: 'darkviolet',
+    LIGHT_GREEN: 'lightgreen',
+    GREY: 'grey',
+    CEIL_BLUE: 'lightblue',
+    BURGUNDY: 'maroon',
+    AQUA: 'aqua',
+};
+
 
 export const products = [
     {

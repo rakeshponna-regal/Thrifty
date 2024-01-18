@@ -20,7 +20,7 @@ import Loader, { sleep } from '../components/Loader';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { KEY_IS_USER_LOGDED, KEY_PASSWORD, KEY_REMEMBER_ME, KEY_USER_EMAIL, KEY_USER_ID, KEY_USER_NAME, KEY_USER_PASSWORD, retrieveItem, storeItem } from '../utils/asyncStorage';
 import realmSchema from '../database/RealmConfig';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { clearState, login } from '../services/slices/loginSlice';
 // let realm = new Realm({ path: 'UserDatabase.realm' });
 
@@ -59,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
       dispatch(login(data))
         .unwrap()
         .then((res) => {
-          console.log(res)
+          console.log("res",res)
           if (res == undefined) {
             showMessage({
               message: "Something went wrong"

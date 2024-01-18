@@ -7,6 +7,11 @@ import { productSlice } from "./slices/productsSlice";
 import { cartSlice } from "./slices/cartSlice";
 import { favoriteSlice } from "./slices/favoriteSlice";
 import { orderSlice } from "./slices/ordersSlice";
+import { profileSlice } from "./slices/profileSlice";
+import { sellerVerifySlice } from "./slices/sellerverify";
+import { sellerProductsSlice } from "./slices/sellerProducts";
+import sellerUser, { sellerUserSlice } from "./slices/sellerUser";
+import { productInfoSlice } from "./slices/productsInfo";
 
 //TODO Provide meaningful names to reducers which will conflict between app modules
 const reducers = combineReducers({
@@ -16,6 +21,11 @@ const reducers = combineReducers({
     cart: cartSlice.reducer,
     favorite:favoriteSlice.reducer,
     orders:orderSlice.reducer,
+    profile:profileSlice.reducer,
+    sellerverify:sellerVerifySlice.reducer,
+    sellerProducts:sellerProductsSlice.reducer,
+    sellerUser:sellerUserSlice.reducer,
+    productsInfo:productInfoSlice.reducer,
   });
 
 

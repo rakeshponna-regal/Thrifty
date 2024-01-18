@@ -18,6 +18,7 @@ import { HeaderBackTitle } from "../components/header";
 import { cartQtySelector, cartTotalPriceSelector } from "../services/slices/selector";
 import { addToOrders } from "../services/slices/ordersSlice";
 import { KEY_USER_ID, retrieveItem } from "../utils/asyncStorage";
+import { showMessage } from 'react-native-flash-message';
 
 const CartTab = ({ navigation }) => {
   const cart = useSelector((state) => state.cart);
@@ -31,7 +32,7 @@ const CartTab = ({ navigation }) => {
 
   return (
     <SafeAreaView forceInset={{ top: 'always' }} style={[styles.safeContainerStyle]}>
-      <HeaderBackTitle navigation={navigation} title={'My Cart'} isBackVisible={false} />
+      <HeaderBackTitle navigation={navigation} title={'My Cart'} isBackVisible={false} isSellerVisible = {true} isSellerActivated={false}/>
       <View style={[styles.containerView, { height: '86%' }]} >
         {(!cart || cart.length === 0) ? (
           <Text
@@ -66,9 +67,15 @@ const CartTab = ({ navigation }) => {
                     {item?.title}
                   </Text>
                   <Text style={styles.title}>
-                    ${item?.price}
+                    Price : ${item?.price}
                   </Text>
-                  <View style={styles.quantity}>
+                  <Text style={styles.title}>
+                    Size :  {item?.medium? item?.medium :"Medium"}
+                  </Text>
+                  <Text style={styles.title}>
+                    Seller : {item?.seller? item?.seller :"LogiMart"}
+                  </Text>
+                  {/* <View style={styles.quantity}>
                     <TouchableOpacity
                       style={styles.decreaseButton}
                       onPress={() => {
@@ -120,7 +127,7 @@ const CartTab = ({ navigation }) => {
                         +{" "}
                       </Text>
                     </TouchableOpacity>
-                  </View>
+                  </View> */}
 
                   {/* <Text style={styles.text}>
                     Quantity - {item.quantity}
@@ -212,7 +219,7 @@ const CartTab = ({ navigation }) => {
               Total: $
               {totalPrice == 0 ? totalPrice : totalPrice + 20}
             </Text>
-            <Text
+            {/* <Text
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
@@ -220,7 +227,7 @@ const CartTab = ({ navigation }) => {
             >
               Total Quantity:{" "}
               {totalqty}
-            </Text>
+            </Text> */}
           </View>
 
           <TouchableOpacity
@@ -246,7 +253,7 @@ const CartTab = ({ navigation }) => {
                   {
                     text: "Cancel",
                     onPress: () =>  
-                    navigation.navigate('cartcheckout')
+                    navigation.navigate('cartcheckoutq')
                     ,
                   },
                   {
@@ -257,11 +264,13 @@ const CartTab = ({ navigation }) => {
                         const orders = {
                           orderId : new Realm.BSON.ObjectId().toString(),
                           user_id :  await retrieveItem(KEY_USER_ID),
-                          status :"Pending",
+                          status :"Shipped",
                           payment_id: ID,
                           orders : cart
                         }
                         dispatch(addToOrders(orders))
+                        dispatch(clearCart())
+                        
                       } catch (error) {
                         console.log(error)
                       }

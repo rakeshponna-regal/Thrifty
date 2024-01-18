@@ -16,7 +16,7 @@ const colors = {
     text_header_fill: '#00306b',
     body_fill: '#676767',
     black: '#000000',
-    backgroundView :'#e6eaf0',
+    backgroundView :'#f0f0f0',
     inputTextBackground :'#f0f0f0',
     btnBg :'#303030',
   }

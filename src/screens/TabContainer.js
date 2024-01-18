@@ -7,23 +7,14 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome6';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-
-
-import HomeScreen from './HomeScreen';
-import ProfileTab from './ProfileTab';
-import CartTab from './CartTab';
-import FavoriteTab from './FavoriteTab';
-import { Image } from 'react-native-svg';
-import SellerClosets from './SellerClosets';
-import { Platform, View } from 'react-native';
 import ProfileContainer from './container/profileContainer';
-import SellerclosetsContainer from './container/sellerClosets';
 import HomeContainer from './container/homeContainer';
 import FavoriteContainer from './container/FavoriteContrainer';
 import CartContainer from './container/cartContainer';
 import { colors } from '../utils/Theme';
 import { cartTotalSelector } from '../services/slices/selector';
 import { useSelector } from 'react-redux';
+import SellerclosetsContainer from './container/sellerClosetsContainer';
 
 const Tab = createMaterialBottomTabNavigator();
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     View,
     Text,
@@ -11,14 +11,30 @@ import {
 import { HeaderBackTitle } from '../components/header'
 import { useDispatch, useSelector } from 'react-redux'
 import { sizes, colors } from "../utils/Theme";
+import { KEY_USER_ID, retrieveItem } from '../utils/asyncStorage';
 
 const OrderHistroy = ({ navigation }) => {
-    const ordersHistroy = useSelector((state) => state.orders);
+    const orders = useSelector((state) => state.orders);
     const dispatch = useDispatch();
-    console.log("ordersHistroy", ordersHistroy)
+    const [ordersHistroy, setOrdersHistroy] = useState([])
+    console.log("ordersHistroy", orders)
+    const initData = async () => {
+        let userID = await retrieveItem(KEY_USER_ID)
+        ordersHistroy.map((item) => {
+            if(item.user_id == userID){
+                setOrdersHistroy(item)
+            }
+        })
+    }
+    useEffect(
+        () => {
+            initData()
+        }, []
+    )
+
     return (
         <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
-            <HeaderBackTitle navigation={navigation} title={'Order Histroy'} isBackVisible={true} isSellerVisible = {false}/>
+            <HeaderBackTitle navigation={navigation} title={'Order Histroy'} isBackVisible={true} isSellerVisible={false} isSellerActivated={false} />
             <View style={styles.containerView} >
                 {(!ordersHistroy || ordersHistroy.length === 0) ? (
                     <Text
@@ -32,7 +48,7 @@ const OrderHistroy = ({ navigation }) => {
                             textAlign: "center",
                         }}
                     >
-                         No orders yet   
+                        No orders yet
                     </Text>
                 ) : null}
                 <ScrollView>
@@ -41,19 +57,22 @@ const OrderHistroy = ({ navigation }) => {
                             console.log("item histroy ", index, dataItem)
                             {
                                 return (
-                                    <TouchableOpacity style = {styles.card} 
-                                    onPress={()=>{
-                                            
-                                    }}
+                                    <TouchableOpacity style={styles.card}
+                                        onPress={() => {
+                                            navigation.navigate('profileProductInfo', {
+                                                type: 'orders',
+                                                orders: dataItem.orders
+                                            })
+                                        }}
                                     >
                                         <Text>
-                                           CartID :  {dataItem?.orderId}
+                                            CartID :  {dataItem?.orderId}
                                         </Text>
                                         <Text>
-                                           Order Status :  {dataItem?.orderId}
+                                            Order Status :  {dataItem?.status}
                                         </Text>
                                         <Text>
-                                           Products count :  {dataItem?.orders?.length}
+                                            Products count :  {dataItem?.orders?.length}
                                         </Text>
                                     </TouchableOpacity>
                                 );
@@ -85,13 +104,13 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 6,
-        margin:10,
+        margin: 10,
         shadowOpacity: 0.26,
         elevation: 8,
         backgroundColor: 'white',
         padding: 20,
         borderRadius: 10
-      },
+    },
     title: {
         fontSize: 14,
         paddingHorizontal: sizes.padding,

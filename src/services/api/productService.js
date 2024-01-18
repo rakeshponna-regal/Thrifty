@@ -2,6 +2,8 @@ import Realm from 'realm';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import realmSchema, { sch_product } from '../../database/RealmConfig';
 import { productJson } from './products';
+import { useSelector } from 'react-redux';
+import { productsList } from '../slices/selector';
 
 export const storeProductsFromJson = createAsyncThunk(
     '/products',
@@ -20,6 +22,7 @@ export const storeProductsFromJson = createAsyncThunk(
                         images: data.images,
                         creationAt: data.creationAt,
                         updatedAt: data.updatedAt,
+                        seller_id: data.seller_id,
                         rating: {
                             rate: data.rating.rate,
                             count: data.rating.count
@@ -35,7 +38,7 @@ export const storeProductsFromJson = createAsyncThunk(
                     let res =  realmSchema.write(() => {
                           realmSchema.create(sch_product, prod);
                     })
-                    console.log(res)
+                    // console.log(res)
                 })
                 let response  = {
                     status : "Success",
@@ -68,6 +71,51 @@ export const getProducts = createAsyncThunk(
                 status : "Success",
                 message: "Product List.",
                 data : products
+            }
+            return thunkAPI.fulfillWithValue(response);
+        } catch (error) {
+            console.log(error)
+            const message = error
+            return thunkAPI.rejectWithValue(message);
+        }
+    },
+);
+export const getProductsJson = createAsyncThunk(
+    '/productsJson',
+    async (data, thunkAPI) => {
+        try {
+            let dataList = []
+            productJson.map((data) => {
+                let prod = {
+                    id: data.id,
+                    title: data.title,
+                    price: data.price,
+                    description: data.description,
+                    images: data.images,
+                    color: data.color,
+                    size: data.size,
+                    creationAt: data.creationAt,
+                    updatedAt: data.updatedAt,
+                    seller_id: data.seller_id,
+                    rating: {
+                        rate: data.rating.rate,
+                        count: data.rating.count
+                    },
+                    category: {
+                        id: data.category.id,
+                        name: data.category.name,
+                        image: data.category.image,
+                        creationAt: data.category.creationAt,
+                        updatedAt: data.category.updatedAt
+                    },
+                }
+                // console.log("prod",prod)
+                dataList.push(prod)
+            })
+            let response  = {
+                status : "Success",
+                message: "Product List.",
+                data : dataList
             }
             return thunkAPI.fulfillWithValue(response);
         } catch (error) {

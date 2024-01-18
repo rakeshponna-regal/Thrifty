@@ -7,16 +7,12 @@ export const login = createAsyncThunk(
     async (data, thunkAPI) => {
         try {
             let userDetails = realmSchema.objects(sch_user);
-            console.log(userDetails)
             let isEmailExists = userDetails.some(userMail => userMail.email.toLowerCase() == data.email.toLowerCase())
             if (isEmailExists) {
-                let exisingUser = userDetails.map((user) => {
-                    if (user.email.toLowerCase() == data.email.toLowerCase()) {
-                        return user;
-                    }
-                })
-                if (exisingUser.length) {
-                    let user = exisingUser[0]
+                const user = userDetails.find((item) => item.email.toLowerCase() === data.email.toLowerCase());
+                console.log('log....',user)
+                if (user) {
+                    // let user = exisingUser[0]
                     if (user.email.toLowerCase() == data.email.toLowerCase()) {
                         if (user.email.toLowerCase() == data.email.toLowerCase() &&
                             user.password == data.userPassword) {

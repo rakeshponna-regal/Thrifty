@@ -19,14 +19,14 @@ export const cartSlice = createSlice({
             const { id } = payload;
             const find = state.find((item) => item.id === id);
             if (find) {
-                return state.map((item) =>
-                    item.id === id
-                        ? {
-                            ...item,
-                            quantity: item.quantity + 1
-                        }
-                        : item
-                );
+                // return state.map((item) =>
+                //     item.id === id
+                //         ? {
+                //             ...item,
+                //             quantity: item.quantity + 1
+                //         }
+                //         : item
+                // );
             } else {
                 state.push({
                     ...payload,

@@ -19,8 +19,10 @@ export const productSlice = createSlice({
       return state;
     },
     setProduct: (state, {payload}) => {
-        state.products = payload;
-        return state;
+      console.log(payload)
+      state.products.push({
+          ...payload,
+      });
     },
    
   },

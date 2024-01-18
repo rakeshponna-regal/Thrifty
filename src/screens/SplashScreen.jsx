@@ -15,10 +15,14 @@ import { useDispatch ,useSelector} from 'react-redux';
 import { KEY_IS_DUMMY_DATA, KEY_IS_USER_LOGDED, retrieveItem, storeItem } from '../utils/asyncStorage';
 import { clearState, storeProductsFromJson } from '../services/slices/productsSlice';
 import { trackPromise } from 'react-promise-tracker';
+import { getProductsJson } from '../services/api/productService';
+import { addToProducts, clearProductsInfoState } from '../services/slices/productsInfo';
+
 const SplashScreen = ({ navigation }) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
   const dispatch = useDispatch();
+  const sellerProducts = useSelector((state) => state.sellerProducts);
 
 const loadInitData = async () => {
   try {
@@ -59,6 +63,32 @@ const loadInitData = async () => {
       });
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    // dispatch(clearProductsInfoState())
+    trackPromise(
+      dispatch(getProductsJson())
+        .unwrap()
+        .then(resp => {
+          if (resp.status = "Success") {
+            let tempArray = []
+            if (sellerProducts) {
+              sellerProducts?.forEach((item) => {
+                tempArray.push(item)
+              })
+            }
+            console.log(sellerProducts)
+            if (resp.data) {
+              resp.data?.forEach((item) => {
+                tempArray.push(item)
+              })
+            }
+            dispatch(addToProducts(tempArray))
+          }
+        })
+    )
+  }, [])
+
 
   return (
     <View style={styles.container}>
