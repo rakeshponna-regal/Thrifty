@@ -391,7 +391,7 @@ const SellerVerificationScreen = ({ navigation }) => {
                             style={{ textAlignVertical: 'top' }}
                         />
                         <Text style={{ marginStart: 10, marginTop: 10, justifyContent: 'center', alignItems: 'center', alignSelf: 'center', fontSize: 18, fontWeight: '600' }}>Upload Driving licence</Text>
-                        {/* {
+                        {
                             frontImage ? (
                                 <>
                                     <View style={{
@@ -471,7 +471,7 @@ const SellerVerificationScreen = ({ navigation }) => {
 
                                 </>
                             )
-                        } */}
+                        }
 
                         {/* <TouchableOpacity style={{
                             width: "60%",
