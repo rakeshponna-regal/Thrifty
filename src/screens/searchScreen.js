@@ -77,7 +77,7 @@ const SearchScreen = ({ navigation }) => {
                     <TouchableOpacity
                         onPress={() => {
                             console.log("goToItem", item.id, item.qty)
-                            navigation.navigate('favoriteProdItems', {
+                            navigation.navigate('sellerProductDetails', {
                                 product: item
                             });
                         }
@@ -86,7 +86,14 @@ const SearchScreen = ({ navigation }) => {
                         <Image style={styles.image} source={{ uri: item.images[0] }} />
                     </TouchableOpacity>
 
-                    <View style={{ marginStart:10,flex: 1 ,justifyContent:'flex-start',alignContent:'center' }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            console.log("goToItem", item.id, item.qty)
+                            navigation.navigate('sellerProductDetails', {
+                                product: item
+                            });
+                        }
+                        } style={{ marginStart:10,flex: 1 ,justifyContent:'flex-start',alignContent:'center' }}>
                         <Text style={styles.title}>
                             {item?.title}
                         </Text>
@@ -99,9 +106,7 @@ const SearchScreen = ({ navigation }) => {
                         <Text style={styles.title}>
                             Seller code : {item?.seller_id}
                         </Text>
-
-
-                    </View>
+                    </TouchableOpacity>
 
                 </View>
 

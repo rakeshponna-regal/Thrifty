@@ -13,7 +13,7 @@ import {
   LogBox,
   StyleSheet,
 } from 'react-native';
-
+import {request, PERMISSIONS} from 'react-native-permissions';
 import { persistStore } from "redux-persist";
 import store from "./src/services/Store";
 import { Provider } from "react-redux";
@@ -29,6 +29,18 @@ LogBox.ignoreLogs(['Your app is relying on a Realm global, which will be removed
 LogBox.ignoreAllLogs
 
 const App = () => {
+
+  const requestPermission = () => {
+    request(PERMISSIONS.IOS.CAMERA).then(result => {
+      console.log(result);
+    });
+  };
+  useEffect(
+    ()=>{
+      requestPermission()
+    },[]
+  )
+
   return (
     <>
       <NavController />

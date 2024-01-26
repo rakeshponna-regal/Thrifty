@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
         color: '#ffffff',
     },
 });
-export default CustomButton;
+export default CustomButton;    

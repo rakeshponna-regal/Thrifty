@@ -238,11 +238,13 @@ const SellerVerificationScreen = ({ navigation }) => {
             showMsg('Please enter brand name')
         } else if (!drivingLicence) {
             showMsg('Please enter driving licence')
-        }else if (!frontImage) {
-            showMsg('Please upload front driving licence copy')
-        }else if (!backImage) {
-            showMsg('Please upload back driving licence copy')
-        } else {
+        }
+        // else if (!frontImage) {
+        //     showMsg('Please upload front driving licence copy')
+        // }else if (!backImage) {
+        //     showMsg('Please upload back driving licence copy')
+        // }
+         else {
             try {
                 var ID = Math.floor(Math.random() * 100)
             let data = {
@@ -389,7 +391,7 @@ const SellerVerificationScreen = ({ navigation }) => {
                             style={{ textAlignVertical: 'top' }}
                         />
                         <Text style={{ marginStart: 10, marginTop: 10, justifyContent: 'center', alignItems: 'center', alignSelf: 'center', fontSize: 18, fontWeight: '600' }}>Upload Driving licence</Text>
-                        {
+                        {/* {
                             frontImage ? (
                                 <>
                                     <View style={{
@@ -469,7 +471,7 @@ const SellerVerificationScreen = ({ navigation }) => {
 
                                 </>
                             )
-                        }
+                        } */}
 
                         {/* <TouchableOpacity style={{
                             width: "60%",

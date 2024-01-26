@@ -42,7 +42,7 @@ const ProductDetails = ({ navigation, route }) => {
     setSeller(sellerJson.find((item) => item.id === product.seller_id))
   }, [seller])
   console.log("isCartItemExists", isCartItemExists, itemProduct)
-    console.log("seller", seller)
+  console.log("seller", seller)
 
   const handleViewClick = (viewIndex) => {
     // Update the state to store the selected view index
@@ -84,11 +84,11 @@ const ProductDetails = ({ navigation, route }) => {
                   flex: 1,
                   fontSize: sizes.h3,
                   fontWeight: "700",
-                  paddingHorizontal: sizes.padding,
+                  paddingHorizontal: sizes.padding-10,
                   marginTop: sizes.margin,
                 }}
               >
-                US ${price}
+                US ${price} 
               </Text>
               <View style={{ flexDirection: "row" }}>
                 <View
@@ -117,11 +117,11 @@ const ProductDetails = ({ navigation, route }) => {
                 </View>
               </View>
             </View>
-            <View style={{ marginTop: sizes.margin - 5 }}>
+            {/* <View style={{ marginTop: sizes.margin - 5 }}>
               <Text style={{ paddingHorizontal: sizes.padding }}>
                 {desc}
               </Text>
-            </View>
+            </View> */}
 
             <View style={{ marginStart: 5, marginTop: 10, flexDirection: "row", flex: 1 }}>
               <Text style={{
@@ -215,31 +215,38 @@ const ProductDetails = ({ navigation, route }) => {
 
             </View>
  */}
-            <View style={{ marginStart: 5, marginTop: 10, flexDirection: "row", flex: 1 }}>
-              <Text style={{
-                paddingHorizontal: 5, fontSize: 16,
-                fontWeight: "700", marginTop: 16,
-              }}>
-                Seller
-              </Text>
-            </View>
 
-            <TouchableOpacity
-              key={''}
-              onPress={() => {
-                navigation.navigate('homeProdInfo', {
-                  productInfo: seller
-                })
-              }}
-              style={styles.userItem}
-            >
-              <Image source={{ uri: seller?.image }} style={styles.userPhoto} />
-              <View style={{ marginStart: 5, marginTop: 0, flexDirection: "column", flex: 1 }}>
-                <Text style={styles.userName}>{seller?.name}</Text>
-                {/* <Text style={styles.userName}>{'Luther'}</Text> */}
-                {/* <Text style={styles.userName}>{'Luther'}</Text> */}
-              </View>
-            </TouchableOpacity>
+            {
+              seller ? (
+                <>
+
+                  <View style={{ marginStart: 5, marginTop: 10, flexDirection: "row", flex: 1 }}>
+                    <Text style={{
+                      paddingHorizontal: 5, fontSize: 16,
+                      fontWeight: "700", marginTop: 16,
+                    }}>
+                      Seller
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    key={''}
+                    onPress={() => {
+                      navigation.navigate('homeProdInfo', {
+                        productInfo: seller
+                      })
+                    }}
+                    style={styles.userItem}
+                  >
+                    <Image source={{ uri: seller?.image }} style={styles.userPhoto} />
+                    <View style={{ marginStart: 5, marginTop: 0, flexDirection: "column", flex: 1 }}>
+                      <Text style={styles.userName}>{seller?.name}</Text>
+                      {/* <Text style={styles.userName}>{'Luther'}</Text> */}
+                      {/* <Text style={styles.userName}>{'Luther'}</Text> */}
+                    </View>
+                  </TouchableOpacity>
+                </>
+              ) : (<></>)
+            }
 
           </View>
           <View

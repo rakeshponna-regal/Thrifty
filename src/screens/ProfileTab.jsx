@@ -70,7 +70,7 @@ const ProfileTab = ({ navigation }) => {
                   <MaterialIcons name='verified-user' color='blue' size={20} />
                 ) : (
                   <Octicons name='unverified' color='grey' size={20} />
-                )
+                ) 
               }
             </TouchableOpacity>
 

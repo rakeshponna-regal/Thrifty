@@ -16,7 +16,7 @@ const SellerClosetsInfo = ({ navigation, route }) => {
     console.log("productsListItem", sellerId, productsInfo)
     return (
         <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
-            <HeaderBackTitle navigation={navigation} title={sellerItem.name} isBackVisible={false} isSellerVisible={true} isSellerActivated={false} />
+            <HeaderBackTitle navigation={navigation} title={sellerItem.name} isBackVisible={true} isSellerVisible={true} isSellerActivated={false} />
             <View style={styles.containerView} >
                 <View style={{
                     flex: 1,
