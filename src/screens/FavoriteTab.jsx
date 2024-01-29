@@ -13,15 +13,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { sizes, colors } from "../utils/Theme";
 import { removeFromFavorite } from '../services/slices/favoriteSlice';
 import Icon from "react-native-vector-icons/Ionicons";
-import { addToCart } from '../services/slices/cartSlice';
+import { addToCart, removeFromCart } from '../services/slices/cartSlice';
 
 const FavoriteTab = ({ navigation }) => {
   const favorite = useSelector((state) => state.favorite);
+  const cart = useSelector((state) => state.cart);
+
   const dispatch = useDispatch();
   console.log("favorite", favorite)
   return (
     <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
-      <HeaderBackTitle navigation={navigation} title={'Favorites'} isBackVisible={false} isSellerVisible = {true} isSellerActivated={false}/>
+      <HeaderBackTitle navigation={navigation} title={'Favorites'} isBackVisible={false} isSellerVisible={true} isSellerActivated={false} />
       <View style={styles.containerView} >
         {(!favorite || favorite.length === 0) ? (
           <Text
@@ -60,6 +62,63 @@ const FavoriteTab = ({ navigation }) => {
                   <Text style={styles.title}>
                     Price : ${item?.price}
                   </Text>
+
+                  {
+                    cart.some((cart) => cart.id === item.id) ?
+                      (
+                        <TouchableOpacity
+                          onPress={() => {
+                            dispatch(removeFromCart(item.id))
+                          }
+                          }
+                          style={{
+                            backgroundColor: '#00306b',
+                            color: '#FFFFFF',
+                            width: 130,
+                            padding: 5,
+                            alignItems: 'flex-start',
+                            borderRadius: 10,
+                            marginLeft: 10,
+                            marginTop: 5,
+                            marginBottom: 5,
+                          }}
+                        >
+                          <Text style={{
+                            color: '#FFFFFF',
+                            paddingStart: 8,
+                            fontSize: 12,
+                            fontWeight: '600',
+                          }}>Remove from cart</Text>
+                        </TouchableOpacity>
+                      ) :
+                      (
+                        <TouchableOpacity
+                          onPress={() => {
+                            dispatch(addToCart(item))
+                          }
+                          }
+                          style={{
+                            backgroundColor: '#00306b',
+                            color: '#FFFFFF',
+                            width: 90,
+                            padding: 5,
+                            alignItems: 'flex-start',
+                            borderRadius: 10,
+                            marginLeft: 10,
+                            marginTop: 5,
+                            marginBottom: 5,
+                          }}
+                        >
+                          <Text style={{
+                            color: '#FFFFFF',
+                            paddingStart: 8,
+                            fontSize: 12,
+                            fontWeight: '600',
+                          }}>Add to cart</Text>
+                        </TouchableOpacity>
+                      )
+                  }
+{/* 
                   <TouchableOpacity
                     onPress={() => {
                       dispatch(addToCart(item))
@@ -84,6 +143,8 @@ const FavoriteTab = ({ navigation }) => {
                       fontWeight: '600',
                     }}>Add to cart</Text>
                   </TouchableOpacity>
+ */}
+
                 </View>
 
                 <TouchableOpacity

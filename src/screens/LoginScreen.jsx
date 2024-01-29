@@ -75,8 +75,8 @@ const LoginScreen = ({ navigation }) => {
             if (data) {
               storeItem(KEY_USER_NAME, data.first_name)
               storeItem(KEY_USER_ID, data.id)
+              storeItem(KEY_USER_EMAIL, data.email)
               if (checked) {
-                storeItem(KEY_USER_EMAIL, data.email)
                 storeItem(KEY_USER_PASSWORD, data.password)
                 storeItem(KEY_REMEMBER_ME, "true")
               } else {

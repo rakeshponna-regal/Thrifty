@@ -252,6 +252,18 @@ const HomeScreen = ({ navigation }) => {
                 showMessage({
                   message: "Removed from List"
               });
+              try {
+                let nextItem = productsInfo[activeIndex+1]
+                if (nextItem){
+                  setActiveIndex(activeIndex+1)
+                  setPrize(nextItem?.price);
+                  setActiveProduct(nextItem)
+                  const isFavoriteItemExists = favorite.some((item) => item.id === nextItem.id)
+                  checkExisitngProducState(isFavoriteItemExists)
+                }
+              } catch (error) {
+                console.log(error)
+              }
               }}
             />
             <MaterialIcons name={likedProduct ? 'favorite' : 'favorite-border'} color={likedProduct ? 'red' : 'grey'} size={30}
@@ -278,7 +290,7 @@ const styles = StyleSheet.create({
   containerView: {
     marginEnd: 5,
     width: "100%",
-    height: '86%',
+    height: '91%',
     backgroundColor: '#ffffff',
     color: "white"
   },

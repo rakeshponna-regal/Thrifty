@@ -9,11 +9,10 @@ import SearchBar from '../components/SearchBar'
 const SellerClosets = ({ navigation }) => {
     const dispatch = useDispatch();
     const sellerUser = useSelector((state) => state.sellerUser);
-    console.log("sellerUser", sellerUser)
+    console.log("sellerUser", sellerUser, sellerList)
     const [sellerList, setSellerList] = useState([])
     const [searchPhrase, setSearchPhrase] = useState("");
     const [clicked, setClicked] = useState(false);
-
     let dataList = []
     useEffect(() => {
         sellerUser.map((data) => {
@@ -29,16 +28,35 @@ const SellerClosets = ({ navigation }) => {
         navigation.navigate('sellerSearchScreen')
     }
 
+    const _renderItem = (data) => {
+        console.log('item',item)
+        const item = data.item
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    navigation.navigate('sellerClosetsInfo', {
+                        productInfo: item,
+                        sellerItem: item,
+                        sellerId: item.id,
+                    })
+                }}
+                style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    margin: 5,
+
+                }}>
+                <Image
+                    style={styles.imageThumbnail}
+                    source={{ uri: item.image }}
+                />
+            </TouchableOpacity>
+        )
+    }
+
     return (
         <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
             <HeaderSearchTitle navigation={navigation} title={'Seller closets'} isBackVisible={false} onSeachPress={_onSeachPress} />
-            {/* <SearchBar
-                searchPhrase={searchPhrase}
-                setSearchPhrase={setSearchPhrase}
-                clicked={clicked}
-                setClicked={setClicked}
-            /> */}
-
             <View style={styles.containerView} >
                 <View style={{
                     flex: 1,
@@ -59,27 +77,29 @@ const SellerClosets = ({ navigation }) => {
                     >Monthly Hottest {"\n"}Sellers closets</Text>
                     <FlatList
                         data={sellerList}
-                        renderItem={({ item }) => (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    navigation.navigate('sellerClosetsInfo', {
-                                        productInfo: item,
-                                        sellerItem: item,
-                                        sellerId: item.id,
-                                    })
-                                }}
-                                style={{
-                                    flex: 1,
-                                    flexDirection: 'column',
-                                    margin: 5,
+                        renderItem={_renderItem}
+                        // renderItem={({ item }) => (
+                        //     <TouchableOpacity
+                        //         onPress={() => {
+                        //             console.log('sellerClosetsInfo')
+                        //             navigation.navigate('sellerClosetsInfo', {
+                        //                 productInfo: item,
+                        //                 sellerItem: item,
+                        //                 sellerId: item.id,
+                        //             })
+                        //         }}
+                        //         style={{
+                        //             flex: 1,
+                        //             flexDirection: 'column',
+                        //             margin: 5,
 
-                                }}>
-                                <Image
-                                    style={styles.imageThumbnail}
-                                    source={{ uri: item.image }}
-                                />
-                            </TouchableOpacity>
-                        )}
+                        //         }}>
+                        //         <Image
+                        //             style={styles.imageThumbnail}
+                        //             source={{ uri: item.image }}
+                        //         />
+                        //     </TouchableOpacity>
+                        // )}
                         //Setting the number of column
                         numColumns={3}
                         keyExtractor={(item, index) => index}

@@ -65,6 +65,7 @@ const SellerClosetsInfo = ({ navigation, route }) => {
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         onPress={() => {
+                                            console.log('sellerProductDetails')
                                             navigation.navigate('sellerProductDetails', {
                                                 product: item
                                             });
@@ -100,9 +101,9 @@ const SellerClosetsInfo = ({ navigation, route }) => {
                                             renderItem={({ item }) => (
                                                 <TouchableOpacity
                                                     onPress={() => {
-                                                        // navigation.navigate('sellerProducts', { 
-                                                        //     sellerItem:item
-                                                        // })
+                                                        navigation.navigate('sellerProductDetails', {
+                                                            product: item
+                                                        });
                                                     }}
                                                     style={{
                                                         flex: 0.6,
@@ -129,9 +130,9 @@ const SellerClosetsInfo = ({ navigation, route }) => {
                                                 renderItem={({ item }) => (
                                                     <TouchableOpacity
                                                         onPress={() => {
-                                                            // navigation.navigate('sellerProducts', { 
-                                                            //     sellerItem:item
-                                                            // })
+                                                            navigation.navigate('sellerProductDetails', {
+                                                                product: item
+                                                            });
                                                         }}
                                                         style={{
                                                             flex: 1,

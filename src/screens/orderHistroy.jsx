@@ -17,20 +17,36 @@ const OrderHistroy = ({ navigation }) => {
     const orders = useSelector((state) => state.orders);
     const dispatch = useDispatch();
     const [ordersHistroy, setOrdersHistroy] = useState([])
-    console.log("ordersHistroy", orders)
+    console.log("orders", orders)
     const initData = async () => {
+        setOrdersHistroy([])
+        let ord = []
         let userID = await retrieveItem(KEY_USER_ID)
-        ordersHistroy.map((item) => {
+        orders.map((item) => {
             if(item.user_id == userID){
-                setOrdersHistroy(item)
+                console.log('added')
+                console.log(JSON.stringify(item))
+                ord.push(item)
+                // 
             }
         })
+        setOrdersHistroy(ord)
     }
     useEffect(
         () => {
             initData()
         }, []
     )
+
+const calculateOrderPrice = (orders) => {
+    // Initialize the total price to zero
+    let totalPrice = 0;
+    orders.map((order) => {
+        totalPrice += parseFloat(order.price);
+    });
+    // Return the calculated total price
+    return `$${totalPrice}`;
+};
 
     return (
         <SafeAreaView forceInset={{ top: 'always' }} style={styles.safeContainerStyle}>
@@ -65,14 +81,17 @@ const OrderHistroy = ({ navigation }) => {
                                             })
                                         }}
                                     >
-                                        <Text>
+                                       {/*  <Text>
                                             CartID :  {dataItem?.orderId}
-                                        </Text>
+                                        </Text> */}
                                         <Text>
                                             Order Status :  {dataItem?.status}
                                         </Text>
                                         <Text>
-                                            Products count :  {dataItem?.orders?.length}
+                                            Products :  {dataItem?.orders?.length}
+                                        </Text>
+                                        <Text>
+                                            Total Price :  {calculateOrderPrice(dataItem?.orders)}
                                         </Text>
                                     </TouchableOpacity>
                                 );
